@@ -4,21 +4,13 @@ import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Card from './Card'
 import InputLabel from '@mui/material/InputLabel';
 import NativeSelect from '@mui/material/NativeSelect';
 import FormControl from '@mui/material/FormControl';
-import { useDispatch, useSelector } from "react-redux";
+import Card from './Card';
+import { TabPanelProps } from '../styles/globals';
 
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  dir?: string;
-  index: any;
-  value: any;
-}
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -40,7 +32,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: any) {
+function a11yProps(index: number) {
   return {
     id: `full-width-tab-${index}`,
     'aria-controls': `full-width-tabpanel-${index}`,
@@ -59,7 +51,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function MainShow() {
   const classes = useStyles();
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState<number>(0);
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -69,14 +61,11 @@ export default function MainShow() {
     setValue(index);
   };
 
-  const [sort, setSort] = React.useState('all');
+  const [sort, setSort] = React.useState<string>('all');
 
-  const handleChange2 = (event: any) => {
+  const selectChange = (event: any) => {
     setSort(event.target.value as string);
-    console.log(event.target.value)
   };
-
-  const dispatch = useDispatch();
 
   return (
     <div className={classes.root}>
@@ -95,12 +84,12 @@ export default function MainShow() {
         </Tabs>
       </AppBar>
       <FormControl >
-        <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{paddingTop:'7px'}}>
+        <InputLabel variant="standard" htmlFor="uncontrolled-native" style={{ paddingTop: '7px' }}>
           Sort
         </InputLabel>
         <NativeSelect
           defaultValue='all'
-          onClick={(e) => handleChange2(e)}
+          onClick={(e) => selectChange(e)}
           inputProps={{
             name: 'sort',
             id: 'uncontrolled-native',
@@ -119,13 +108,13 @@ export default function MainShow() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <Card food='pizza' sort={sort}/>
+          <Card food='pizza' sort={sort} />
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          <Card food='steak' sort={sort}/>
+          <Card food='steak' sort={sort} />
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-          <Card sort={sort}/>
+          <Card sort={sort} />
         </TabPanel>
       </SwipeableViews>
     </div>

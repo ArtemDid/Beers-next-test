@@ -7,7 +7,6 @@ import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Collapse from '@material-ui/core/Collapse';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
@@ -15,17 +14,16 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LocalCafeIcon from '@material-ui/icons/LocalCafe';
 import { useStore, useSelector, useDispatch } from "react-redux";
 import { CreateActionSetBeer } from '../actions/actions'
+import { TypesBeers, TypeSotrByBeers, TypeState } from '../styles/globals';
 
-
-export default function RecipeReviewCard(props: any) {
+export default function RecipeReviewCard(props: TypeSotrByBeers) {
   const store = useStore()
-  const selectorStateCurrency: any = useSelector<any>(state => state.beers)
+  const selectorStateCurrency = useSelector<TypeState>(state => state.beers)
   const dispatch = useDispatch();
-  const beersURL = props?.food ? `https://api.punkapi.com/v2/beers?food=${props?.food}` : `https://api.punkapi.com/v2/beers`;
+  const beersURL:string = props?.food ? `${process.env.BEERS_URL}?food=${props?.food}` : process.env.BEERS_URL as string;
 
-
-  const [expanded, setExpanded] = React.useState<any>([]);
-  const [sortArray, setSortArray] = React.useState<any>([]);
+  const [expanded, setExpanded] = React.useState<Array<boolean>>([]);
+  const [sortArray, setSortArray] = React.useState<Array<TypesBeers>>([]);
   const [clampPairing, setClampPairing] = React.useState<any>(true);
   const [clampDescription, setClampDescription] = React.useState<any>(true);
 
@@ -57,7 +55,6 @@ export default function RecipeReviewCard(props: any) {
       },
       expand: {
         transform: 'rotate(0deg)',
-        // marginLeft: 'auto',
         transition: theme.transitions.create('transform', {
           duration: theme.transitions.duration.shortest,
         }),
@@ -74,53 +71,53 @@ export default function RecipeReviewCard(props: any) {
   const classes = useStyles();
 
 
-  const handleExpandClick = (index: any) => {
+  const handleExpandClick = (index: number) => {
     expanded[index] = !expanded[index]
     setExpanded([...expanded])
   };
 
-  async function fetchRates() {
+  async function fetchBeers() {
     try {
       const response = await fetch(beersURL, {
         method: 'GET',
       });
-      let data = await response.json();
+      let data:Array<TypesBeers> = await response.json();
 
       console.log('data: ', data)
       setExpanded(new Array(data.length).fill(false))
-      dispatch(CreateActionSetBeer(data));
+      dispatch(CreateActionSetBeer(data)); // initial store but we don't use. We use useState only for show beers
 
-      switch(props.sort){
+      switch (props.sort) {
         case 'abv_ascending': {
-          setSortArray(data.sort((a:any, b:any) => a.abv > b.abv ? 1 : -1));
-          break;
+          setSortArray(data.sort((a: TypesBeers, b: TypesBeers) => a.abv > b.abv ? 1 : -1));
+          return;
         }
         case 'abv_descending': {
-          setSortArray(data.sort((a:any, b:any) => a.abv < b.abv ? 1 : -1));
-          break;
+          setSortArray(data.sort((a: TypesBeers, b: TypesBeers) => a.abv < b.abv ? 1 : -1));
+          return;
         }
         case 'name_ascending': {
-          setSortArray(data.sort((a:any, b:any) => a.name > b.name ? 1 : -1));
-          break;
+          setSortArray(data.sort((a: TypesBeers, b: TypesBeers) => a.name > b.name ? 1 : -1));
+          return;
         }
         case 'name_descending': {
-          setSortArray(data.sort((a:any, b:any) => a.name < b.name ? 1 : -1));
-          break;
+          setSortArray(data.sort((a: TypesBeers, b: TypesBeers) => a.name < b.name ? 1 : -1));
+          return;
         }
         default: setSortArray(data);
-      }      
+      }
     } catch (err) {
       console.log("Not Found: ", err);
     }
   }
 
   useEffect(() => {
-    fetchRates();
+    fetchBeers();
   }, [props.sort])
 
   return (
     <Fragment>
-      {sortArray.map((item: any, index: any) => {
+      {sortArray.map((item: TypesBeers, index: number) => {
         return (
           <Card className={classes.root} key={index}>
             <CardHeader
@@ -131,7 +128,7 @@ export default function RecipeReviewCard(props: any) {
               }
               title={item?.name}
               subheader={item?.abv}
-              titleTypographyProps={{style:{fontSize:20}}}
+              titleTypographyProps={{ style: { fontSize: 20 } }}
             />
             <CardMedia
               className={classes.media}
@@ -162,14 +159,16 @@ export default function RecipeReviewCard(props: any) {
                 </Typography>
                 <Typography component="p">Food Pairing:</Typography>
                 <Typography paragraph className={classes.clampPairing} onClick={() => setClampPairing(!clampPairing)}>
-                  {item?.food_pairing}
+                  {item?.food_pairing.map((item: string, index:number) => {
+                    return(<div key={index}>- {item} </div>)
+                  })}
                 </Typography>
               </CardContent>
             </Collapse>
           </Card>
         )
       })}
-      
+
     </Fragment>
   );
 }

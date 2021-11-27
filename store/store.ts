@@ -1,10 +1,11 @@
 import { createStore } from 'redux';
+import { TypeAction, TypeState } from '../styles/globals';
 
-const initialStateBeers = {
+const initialStateBeers:TypeState = {
   beers: []
 }
 
-const reduser = function (state = initialStateBeers, action:any) {
+const reduser = function (state:TypeState = initialStateBeers, action:TypeAction) {
 
   switch (action.type) {
     case "ACTION_SET_BUY_BEER":

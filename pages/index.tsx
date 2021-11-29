@@ -32,7 +32,7 @@ export default function Home({beers}: InferGetServerSidePropsType<typeof getServ
       
     // }, false
     //   )
-},[])
+})
 
   return (
     <Main />

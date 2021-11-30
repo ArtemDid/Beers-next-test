@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const arraySort = ['all', 'abv_ascending', 'abv_descending', 'name_ascending', 'name_descending', 'ebc_ascending', 'ebc_descending', 
+'srm_ascending', 'srm_descending', 'ph_ascending', 'ph_descending', 'attenuation_level_ascending', 'attenuation_level_descending'];
+
 export default function MainShow() {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -39,19 +42,9 @@ export default function MainShow() {
             id: 'uncontrolled-native',
           }}
         >
-          <option value='all'>all</option>
-          <option value='abv_ascending'>abv_ascending</option>
-          <option value='abv_descending'>abv_descending</option>
-          <option value='name_ascending'>name_ascending</option>
-          <option value='name_descending'>name_descending</option>
-          <option value='ebc_ascending'>ebc_ascending</option>
-          <option value='ebc_descending'>ebc_descending</option>
-          <option value='srm_ascending'>srm_ascending</option>
-          <option value='srm_descending'>srm_descending</option>
-          <option value='ph_ascending'>ph_ascending</option>
-          <option value='ph_descending'>ph_descending</option>
-          <option value='attenuation_level_ascending'>attenuation_level_ascending</option>
-          <option value='attenuation_level_descending'>attenuation_level_descending</option>
+          {arraySort.map((item:string, index:number)=>{
+            return(<option value={item} key={index}>{item}</option>)
+          })}
         </NativeSelect>
       </FormControl>
       </div>

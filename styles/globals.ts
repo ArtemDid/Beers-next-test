@@ -29,13 +29,21 @@ export interface TypesBeers {
   contributed_by: string
 }
 
-export interface TypeAction {
+export interface TypeActionBeers {
   type: string,
   payload: Array<TypesBeers>
 }
 
+export interface TypeActionSort {
+  type: string,
+  payload: string
+}
+
+
 export interface TypeState {
-  beers: Array<TypesBeers>
+  beers: Array<TypesBeers>,
+  beersAll: Array<TypesBeers>,
+  sort: string
 }
 
 export interface TypeSotrByBeers {
@@ -43,4 +51,9 @@ export interface TypeSotrByBeers {
   food?: string
 }
 
+export type PropsModal = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  item: any
+};
 

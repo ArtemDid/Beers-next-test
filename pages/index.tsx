@@ -1,55 +1,44 @@
 import type { GetServerSideProps, NextPage } from 'next'
-import Main from '../components/Main'
-import { ReactElement, useEffect, useLayoutEffect } from 'react'
+import Cards from '../components/Cards'
+import React, { ReactElement, useEffect, useLayoutEffect } from 'react'
 import Layout from '../components/layout'
-import Navbar from '../components/navbar'
+import Navbar from '../components/Navbar'
 import { InferGetServerSidePropsType } from 'next'
 import axios from 'axios';
 import { useRouter } from 'next/router'
 import { useStore, useSelector, useDispatch } from "react-redux";
 import { CreateActionSetBeer } from '../actions/actions'
+import CardSort from '../components/CardSort'
+import { Provider } from 'react-redux'
+import store from '../store/store'
 
-
-
-export default function Home({beers}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ beers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter()
-  // window.history.replaceState(null, '', '/')
-  const { food } = router.query
-  console.log(beers, food)
   const dispatch = useDispatch();
   dispatch(CreateActionSetBeer(beers));
-  
 
   useLayoutEffect(() => {
-    window.addEventListener('load', ()=>{
-      // window.history.replaceState(null, '', '/')
+    window.addEventListener('load', () => {
       router.push('/')
-      console.log('****')
-      
-    },false)
-    // window.removeEventListener('load',()=>{
-    //   console.log('gggg')
-      
-    // }, false
-    //   )
-})
+    }, false)
+  })
 
   return (
-    <Main />
+    <Cards />
   )
 }
 
 Home.getLayout = function getLayout(page: ReactElement) {
   return (
-    <Layout>
-       {/*@ts-ignore */}
-      <Navbar/>
-      {page}
-    </Layout>
+    <Provider store={store}>
+      <Layout>
+        <Navbar />
+        <CardSort />
+        {page}
+      </Layout>
+    </Provider>
   )
 }
-
-// const beersURL:string = props?.food ? `${process.env.BEERS_URL}?food=${props?.food}` : process.env.BEERS_URL as string;
 
 const fetchData = async (beersURL: string) => await axios.get(beersURL)
   .then(res => ({
@@ -57,23 +46,22 @@ const fetchData = async (beersURL: string) => await axios.get(beersURL)
     beers: res.data,
   }))
   .catch(() => ({
-      error: true,
-      beers: null,
-    }),
+    error: true,
+    beers: null,
+  }),
   );
-  
 
-  export const getServerSideProps:GetServerSideProps = async ({
-    params,
-    res
-  }:any) => {
 
-    const url = res.req.url.split('=')[1]
-    const beersURL:string = url ? `${process.env.BEERS_URL}?food=${url}` : process.env.BEERS_URL as string;
-    console.log('params', url)
-    const data = await fetchData(beersURL);
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  res
+}: any) => {
 
-    return {
-      props: data
-    };
-  }
+  const url = res.req.url.split('=')[1]
+  const beersURL: string = url ? `${process.env.BEERS_URL}?food=${url}` : process.env.BEERS_URL as string;
+  const data = await fetchData(beersURL);
+
+  return {
+    props: data
+  };
+}
